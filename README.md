@@ -1,5 +1,14 @@
 # ipc360 — list, download and watch the SD recordings of an IPC360 / Puwell camera, without its app
 
+**☕ [Buy me a coffee](https://buymeacoffee.com/neonpumpkin)** — hobby project, one camera, several weeks
+of reverse engineering. If this saved you an afternoon, that is worth a coffee. The `NeonPumpkin` mark
+([`assets/neonpumpkin.jpg`](assets/neonpumpkin.jpg)) is the same one on the GitHub profile and on the tip
+jar, so the code, the profile and the coffee all read as one person — and the green **Sponsor** button
+beside this repository points at the same link (`.github/FUNDING.yml`).
+
+<img src="assets/neonpumpkin.jpg" align="right" width="96" height="96"
+     alt="the NeonPumpkin mark — the same on the GitHub profile and buymeacoffee"/>
+
 Two tools, one protocol:
 
 | file | what it is |
@@ -12,14 +21,6 @@ Why this exists: the camera's own app will not show you *what is on the card* fo
 day you did not open, will not give you an mp4 you can keep, and cannot be scripted.
 Everything here talks to the **cloud managers** the app uses — the camera itself is
 never reconfigured, and nothing is written to the SD card.
-
-**☕ [Buy me a coffee](https://buymeacoffee.com/neonpumpkin)** — hobby project, one camera, several
-weeks of reverse engineering. If this saved you an afternoon, that is worth a coffee. The
-`NeonPumpkin` mark ([`assets/neonpumpkin.jpg`](assets/neonpumpkin.jpg)) is the same one on the
-GitHub profile and on the tip jar, so the code, the profile and the coffee all read as one person.
-
-<img src="assets/neonpumpkin.jpg" align="right" width="96" height="96"
-     alt="the NeonPumpkin mark — the same on the GitHub profile and buymeacoffee"/>
 
 ---
 

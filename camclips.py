@@ -1193,6 +1193,17 @@ def look_chip(to: str) -> str:
             % urllib.parse.quote(to, safe=""))
 
 
+COFFEE = "https://buymeacoffee.com/neonpumpkin"   # the author's tip jar (repo: .github/FUNDING.yml)
+
+
+def sponsor_chip() -> str:
+    """The tip-jar chip in the nav row of EVERY page: the LAN page should be as attributable as
+    the repo page, and the mark + the coffee + the profile are the same person. It links OUT of the
+    LAN, so it is inert to the gallery (asks the camera nothing, starts nothing)."""
+    return ('<a class="btn" href="%s" rel="noopener nofollow" title="if this saved you an afternoon '
+            '\u2014 the same mark is on the repo">buy me a coffee</a>' % COFFEE)
+
+
 def render_look(to: str = "") -> str:
     """THE LOOK MENU . Every effect = its own on/off switch
     plus three presets (off / calm / full); a choice is saved in prefs.json and applies to every
@@ -1205,9 +1216,9 @@ def render_look(to: str = "") -> str:
     for b in FX_ORDER:
         on = b in cur
         mot = " \u00b7 it moves" if b in FX_MOTION else ""
-        rows.append('<div class="drow"><b class="dname">%s</b>'
-                    '<span class="k">%s%s</span>%s</div>'
-                    % (b, esc(FX_LABEL[b]), mot, fx_switch(b, on, enc)))
+        rows.append('<div class="drow">%s<b class="dname">%s</b>'
+                    '<span class="k">%s%s</span></div>'
+                    % (fx_switch(b, on, enc), b, esc(FX_LABEL[b]), mot))
     presets = []
     for p in ("off", "calm", "full"):
         name = ("no effects at all" if p == "off" else
@@ -1223,6 +1234,7 @@ def render_look(to: str = "") -> str:
                    'here changes how that page draws">go back to %s</a>' % (enc, lbl) if lbl else
                    '<a class="btn" href="%s">go back</a>' % enc)
     nav.append('<a class="btn" href="/help">how it works</a>')
+    nav.append(sponsor_chip())
     body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
             '<div class="nav">%s</div></div>' % "".join(nav),
             '<h1>the look \u2014 switch any effect on or off</h1>',
@@ -1401,6 +1413,7 @@ def render_home(month: str | None = None) -> str:
         nav.append('<a class="btn" href="/month?m=%s">next month \u203a</a>' % esc(month_step(m, 1)))
     nav.append(look_chip("/month?m=%s" % m))
     nav.append('<a class="btn" href="/help">how it works</a>')
+    nav.append(sponsor_chip())
     # NO side-effect chip in the nav row . Nav = navigation + help + the LOOK menu ONLY -
     # `change look` asks the camera for nothing and starts nothing; the sweep chip moves
     # below the calendar, into the stats row, and says what it does and how big it is.
@@ -1451,7 +1464,11 @@ def render_month(month: str) -> str:
 def render_help() -> str:
     """The long text, one page: the gallery pages stay visual. Everything the buttons and the
     day map do, what the colours mean, and what a pull costs."""
-    body = ['<h1>how this gallery works</h1>',
+    body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
+            '<div class="nav">%s</div></div>'
+            % "".join(['<a class="btn" href="/">home \u2014 this month</a>',
+                       look_chip("/help"), sponsor_chip()]),
+            '<h1>how this gallery works</h1>',
             '<div class="panel"><h2>Getting around</h2>'
             '<div class="k">The wordmark <b>ipc360 clips</b> at the top-left IS the home button - it is '
             'on every page, so you never need the browser\'s back button. Each page also carries buttons: '
@@ -1664,6 +1681,7 @@ def render_day(day: str, pull: tuple = None, check=None, clock: str | None = Non
     if not pull:                          # a pull page stays put: no bouncing anywhere
         nav.append(look_chip("/day?day=%s" % esc(day)))
     nav.append('<a class="btn" href="/help">how it works</a>')
+    nav.append(sponsor_chip())
     hdr = ('<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
            '<div class="nav">%s</div></div>' % "".join(nav))
     # the SD-card line is NOT a third header row  - it sits next to the
@@ -1737,8 +1755,8 @@ def render_clip(name: str) -> str:
     body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
             '<div class="nav"><a class="btn" href="/day?day=%s">that day</a>'
             '<a class="btn" href="/">home</a><a class="btn" href="/help">how it works</a>'
-            '%s</div></div>'
-            % (esc(d0), look_chip("/clip?name=%s" % name)),
+            '%s%s</div></div>'
+            % (esc(d0), look_chip("/clip?name=%s" % name), sponsor_chip()),
             card_html(name, meta, pre="auto", auto=True)]
     return page(name, "".join(body))
 
@@ -2070,6 +2088,10 @@ class H(SimpleHTTPRequestHandler):
             if logs:
                 tail = logs[-1].read_text()[-4000:]
             self.send_html(page("status",
+                                ('<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
+                                 '<div class="nav"><a class="btn" href="/">home \u2014 this month</a>'
+                                 '<a class="btn" href="/help">how it works</a>%s</div></div>'
+                                 % sponsor_chip()) +
                                 '<pre>%s\nlast grab log (tail):\n%s</pre>'
                                 % (esc(info or "lock: idle"), esc(tail))))
             return
