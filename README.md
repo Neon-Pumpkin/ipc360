@@ -1,16 +1,5 @@
 # ipc360 — list, download and watch the SD recordings of an IPC360 / Puwell camera, without its app
 
-**by [Neon-Pumpkin](https://github.com/Neon-Pumpkin)** · ☕ **[Buy me a coffee](https://buymeacoffee.com/neonpumpkin)**
-— hobby project, one camera, several weeks of reverse engineering. If this saved you an afternoon, that
-is worth a coffee. The `Neon-Pumpkin` mark ([`assets/neonpumpkin.jpg`](assets/neonpumpkin.jpg)) is the
-same one on the GitHub profile and on the tip jar, and the gallery page carries the same byline
-(`by Neon-Pumpkin` + the thumbnail + a `support` chip), so the code, the served page, the profile and
-the coffee all read as one person — and the green **Sponsor** button beside this repository (`.github/FUNDING.yml`)
-points at the same link.
-
-<img src="assets/neonpumpkin.jpg" align="right" width="96" height="96"
-     alt="the NeonPumpkin mark — the same on the GitHub profile and buymeacoffee"/>
-
 Two tools, one protocol:
 
 | file | what it is |
@@ -288,6 +277,17 @@ Open an issue and paste the exact command you ran — the answer depends on flag
 forget. Enough = the command, its full output, the `x partial / y err` line the gallery prints for
 that clip (or the `seg.stats.json`), and whether the day map itself looked right. "it plays jagged
 around 14:25" is fixable, "it doesn't work" is not.
+
+## The author
+
+<img src="assets/neonpumpkin.jpg" align="right" width="96" height="96"
+     alt="the Neon-Pumpkin mark — the same on the GitHub profile and buymeacoffee"/>
+
+**[Neon-Pumpkin](https://github.com/Neon-Pumpkin)** · ☕ **[buymeacoffee.com/neonpumpkin](https://buymeacoffee.com/neonpumpkin)**
+
+The same mark and the same name are on the profile, on this repository (`.github/FUNDING.yml` → the
+**Sponsor** button), and on the served gallery page — the header of every page reads
+`by Neon-Pumpkin` next to the thumbnail, and its nav row carries a `support ☕` chip.
 
 ## License
 
