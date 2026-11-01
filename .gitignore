@@ -1,0 +1,30 @@
+# what a running gallery writes next to itself - never commit it
+camclips-share/
+probes/
+prefs.json
+prefs.json.tmp
+grab.lock
+grab-running.json
+sweep-running.json
+sweep.log
+*.wire
+*.mkv
+*.mp4
+*.mp3
+*.wav
+*.jpg
+*.h264
+*.stats.json
+*.log
+daymap-*.json
+__pycache__/
+*.pyc
+# if you keep creds beside the checkout anyway, ignore them loudly
+*pw*
+*creds*
+*.txt
+!README.md
+!LICENSE
+
+# the author's mark is a real asset, not gallery junk
+!assets/neonpumpkin.jpg
