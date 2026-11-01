@@ -1234,7 +1234,7 @@ def page_hdr(nav) -> str:
         nav = "".join(nav)
     return ('<div class="hdr">'
             '<a class="logo" href="/"><b>ipc360</b> clips</a>'
-            '<span class="by">by <a href="%s" rel="me noopener" title="the person who wrote this">%s'
+            '<span class="by">by <a href="%s" rel="me noopener" title="GitHub">%s'
             '</a><img class="mark" src="%s" width="26" height="26" alt="the Neon-Pumpkin mark \u2014 '
             'the same one on the GitHub profile, the repo and the tip jar"/></span>'
             '<div class="nav">%s</div></div>'

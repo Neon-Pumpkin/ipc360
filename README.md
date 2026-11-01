@@ -10,10 +10,35 @@ Two tools, one protocol:
 
 Why this exists: the camera's own app will not show you *what is on the card* for a
 day you did not open, will not give you an mp4 you can keep, and cannot be scripted.
-Everything here talks to the **cloud managers** the app uses — the camera itself is
-never reconfigured, and nothing is written to the SD card.
+Everything here talks to the **cloud managers the app itself uses** — the same servers your camera
+already phones home to every day, so **internet is required**: the day map and the pull are answered by
+those managers and the video travels camera → manager → us. (The manager can also announce the
+camera's LAN address, which adds a LAN leg to a pull, but the session itself always comes from the
+managers — a camera with no internet gives this tool nothing.) What is never touched: the camera is
+never reconfigured, nothing is written to it, and nothing is written to the SD card.
 
 ---
+
+## What it looks like
+
+**A month calendar** — every real date is a cell, each carrying a 24-hour hairline bar of what the SD
+card holds for that date (green) and what this gallery already pulled (amber).
+
+<img src="assets/shot-calendar.png" width="900" alt="the month calendar page, one cell per date">
+
+**One day** — the SD map as two 12-hour rows: click a green minute to pull it, wheel over a row to zoom
+that row, and a day that is already over opens from its cached map with no camera work at all.
+
+<img src="assets/shot-daymap.png" width="900" alt="one day: the SD day map as two zoomable rows">
+
+**One clip** — it starts playing right away, the ruler under it seeks by minute, the 9 stills jump to
+seconds, and the line below says honestly how complete it is (`0 decode err`). The frame is pixelated
+in this screenshot; a real one shows your own yard.
+
+<img src="assets/shot-clip.png" width="900" alt="one clip with its playback ruler, slider and stills">
+
+The look is yours to pick — `/look` switches every visual effect on and off, and the choice applies to
+every page.
 
 ## Is it your camera?
 
@@ -36,6 +61,10 @@ So, realistically:
 One `--list --day <yesterday>` answers it for any candidate camera in ~10 s.
 
 ## Requirements
+
+**Internet is required** — the day map and the pull are answered by the cloud managers the app uses
+(see *Is it your camera?*). The parts that need no network: `--from-wire` (merge / re-encode saved
+pulls, offline) and the gallery serving clips you already have.
 
 **Python 3** (stdlib only — `socket`, `struct`, `hashlib`, `re`, `argparse`) plus
 **`ffmpeg` / `ffprobe`**, and only for the mux and the stills — `--no-ffmpeg` writes the raw
@@ -284,10 +313,6 @@ around 14:25" is fixable, "it doesn't work" is not.
      alt="the Neon-Pumpkin mark — the same on the GitHub profile and buymeacoffee"/>
 
 **[Neon-Pumpkin](https://github.com/Neon-Pumpkin)** · ☕ **[buymeacoffee.com/neonpumpkin](https://buymeacoffee.com/neonpumpkin)**
-
-The same mark and the same name are on the profile, on this repository (`.github/FUNDING.yml` → the
-**Sponsor** button), and on the served gallery page — the header of every page reads
-`by Neon-Pumpkin` next to the thumbnail, and its nav row carries a `support ☕` chip.
 
 ## License
 
