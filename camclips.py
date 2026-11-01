@@ -829,6 +829,8 @@ CSS = """
  .logo{font-size:16px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
  .logo a{color:var(--tx);text-decoration:none}
  .logo a:hover{color:var(--acc);text-decoration:none}
+ .mark{border-radius:7px}
+ .hdr a:hover{text-decoration:none;filter:brightness(1.12)}
  .nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-left:auto}
  .chips{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 4px}
  .chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);border-radius:14px;
@@ -1195,6 +1197,17 @@ def look_chip(to: str) -> str:
 
 COFFEE = "https://buymeacoffee.com/neonpumpkin"   # the author's tip jar (repo: .github/FUNDING.yml)
 
+MARK = "data:image/jpeg;base64," + (
+    "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"
+)   # a 120 px JPEG of the author's mark, inlined (no route, no path)
+
 
 def sponsor_chip() -> str:
     """The tip-jar chip in the nav row of EVERY page: the LAN page should be as attributable as
@@ -1202,6 +1215,22 @@ def sponsor_chip() -> str:
     LAN, so it is inert to the gallery (asks the camera nothing, starts nothing)."""
     return ('<a class="btn" href="%s" rel="noopener nofollow" title="if this saved you an afternoon '
             '\u2014 the same mark is on the repo">buy me a coffee</a>' % COFFEE)
+
+
+def page_hdr(nav) -> str:
+    """ONE header for EVERY page (2026-11-01: /help and /status had none at all, and the viewer
+    could not get out). The author's mark is the FIRST thing in the row and links to the tip jar,
+    so the served page is as attributable as the repo page; the wordmark next to it links home.
+    The mark is a 120 px JPEG inlined as a data URI - no route, no file beside the code, no extra
+    request - so a copy of the gallery anywhere still shows who wrote it."""
+    if isinstance(nav, list):
+        nav = "".join(nav)
+    return ('<div class="hdr"><a href="%s" rel="noopener nofollow" title="buy the author a coffee">'
+            '<img class="mark" src="%s" width="30" height="30" alt="NeonPumpkin \u2014 the same mark '
+            'is on the repo, the profile and the tip jar"/></a>'
+            '<a class="logo" href="/"><b>ipc360</b> clips</a><div class="nav">%s</div></div>'
+            % (COFFEE, MARK, nav))
+
 
 
 def render_look(to: str = "") -> str:
@@ -1235,8 +1264,7 @@ def render_look(to: str = "") -> str:
                    '<a class="btn" href="%s">go back</a>' % enc)
     nav.append('<a class="btn" href="/help">how it works</a>')
     nav.append(sponsor_chip())
-    body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-            '<div class="nav">%s</div></div>' % "".join(nav),
+    body = [page_hdr(nav),
             '<h1>the look \u2014 switch any effect on or off</h1>',
             '<div class="dlist">%s</div>' % "".join(rows),
             '<div class="chips">%s</div>' % "".join(presets),
@@ -1432,8 +1460,7 @@ def render_home(month: str | None = None) -> str:
                     '<span class="k2">%s \u00b7 %s min on card</span></div>'
                     % (esc(dd), esc(dd), plural(len(by_day[dd])),
                        ("%d" % cm) if cm is not None else "?"))
-    body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-            '<div class="nav">%s</div></div>' % "".join(nav),
+    body = [page_hdr(nav),
             sweep_note(),
             '<h1>%s <span class="k2">the camera \u00b7 SD recordings</span></h1>' % esc(m),
             calendar_html(m, dm, by_day),
@@ -1464,10 +1491,8 @@ def render_month(month: str) -> str:
 def render_help() -> str:
     """The long text, one page: the gallery pages stay visual. Everything the buttons and the
     day map do, what the colours mean, and what a pull costs."""
-    body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-            '<div class="nav">%s</div></div>'
-            % "".join(['<a class="btn" href="/">home \u2014 this month</a>',
-                       look_chip("/help"), sponsor_chip()]),
+    body = [page_hdr(['<a class="btn" href="/">home \u2014 this month</a>',
+                     look_chip("/help"), sponsor_chip()]),
             '<h1>how this gallery works</h1>',
             '<div class="panel"><h2>Getting around</h2>'
             '<div class="k">The wordmark <b>ipc360 clips</b> at the top-left IS the home button - it is '
@@ -1682,8 +1707,7 @@ def render_day(day: str, pull: tuple = None, check=None, clock: str | None = Non
         nav.append(look_chip("/day?day=%s" % esc(day)))
     nav.append('<a class="btn" href="/help">how it works</a>')
     nav.append(sponsor_chip())
-    hdr = ('<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-           '<div class="nav">%s</div></div>' % "".join(nav))
+    hdr = page_hdr(nav)
     # the SD-card line is NOT a third header row  - it sits next to the
     # day title; the wordmark and the nav chips now share ONE row.
     body = [hdr, '<h1>%s \u2014 SD day map + clips <span class="k2">%s</span></h1>'
@@ -1752,11 +1776,10 @@ def render_clip(name: str) -> str:
                     '<a class="help" href="/help">?</a></div>' % esc(name))
     meta = json.loads(jp.read_text())
     d0 = meta.get("day") or ""
-    body = ['<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-            '<div class="nav"><a class="btn" href="/day?day=%s">that day</a>'
-            '<a class="btn" href="/">home</a><a class="btn" href="/help">how it works</a>'
-            '%s%s</div></div>'
-            % (esc(d0), look_chip("/clip?name=%s" % name), sponsor_chip()),
+    body = [page_hdr(['<a class="btn" href="/day?day=%s">that day</a>' % esc(d0),
+                     '<a class="btn" href="/">home</a>',
+                     '<a class="btn" href="/help">how it works</a>',
+                     look_chip("/clip?name=%s" % name), sponsor_chip()]),
             card_html(name, meta, pre="auto", auto=True)]
     return page(name, "".join(body))
 
@@ -2088,10 +2111,9 @@ class H(SimpleHTTPRequestHandler):
             if logs:
                 tail = logs[-1].read_text()[-4000:]
             self.send_html(page("status",
-                                ('<div class="hdr"><a class="logo" href="/"><b>ipc360</b> clips</a>'
-                                 '<div class="nav"><a class="btn" href="/">home \u2014 this month</a>'
-                                 '<a class="btn" href="/help">how it works</a>%s</div></div>'
-                                 % sponsor_chip()) +
+                                page_hdr(['<a class="btn" href="/">home \u2014 this month</a>',
+                                          '<a class="btn" href="/help">how it works</a>',
+                                          sponsor_chip()]) +
                                 '<pre>%s\nlast grab log (tail):\n%s</pre>'
                                 % (esc(info or "lock: idle"), esc(tail))))
             return
