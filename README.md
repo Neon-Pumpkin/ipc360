@@ -1,10 +1,12 @@
 # ipc360 — list, download and watch the SD recordings of an IPC360 / Puwell camera, without its app
 
-**☕ [Buy me a coffee](https://buymeacoffee.com/neonpumpkin)** — hobby project, one camera, several weeks
-of reverse engineering. If this saved you an afternoon, that is worth a coffee. The `NeonPumpkin` mark
-([`assets/neonpumpkin.jpg`](assets/neonpumpkin.jpg)) is the same one on the GitHub profile and on the tip
-jar, so the code, the profile and the coffee all read as one person — and the green **Sponsor** button
-beside this repository points at the same link (`.github/FUNDING.yml`).
+**by [Neon-Pumpkin](https://github.com/Neon-Pumpkin)** · ☕ **[Buy me a coffee](https://buymeacoffee.com/neonpumpkin)**
+— hobby project, one camera, several weeks of reverse engineering. If this saved you an afternoon, that
+is worth a coffee. The `Neon-Pumpkin` mark ([`assets/neonpumpkin.jpg`](assets/neonpumpkin.jpg)) is the
+same one on the GitHub profile and on the tip jar, and the gallery page carries the same byline
+(`by Neon-Pumpkin` + the thumbnail + a `support` chip), so the code, the served page, the profile and
+the coffee all read as one person — and the green **Sponsor** button beside this repository (`.github/FUNDING.yml`)
+points at the same link.
 
 <img src="assets/neonpumpkin.jpg" align="right" width="96" height="96"
      alt="the NeonPumpkin mark — the same on the GitHub profile and buymeacoffee"/>

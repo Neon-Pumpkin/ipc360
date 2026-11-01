@@ -830,6 +830,10 @@ CSS = """
  .logo a{color:var(--tx);text-decoration:none}
  .logo a:hover{color:var(--acc);text-decoration:none}
  .mark{border-radius:7px}
+ .by{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--tx3);letter-spacing:.2px}
+ .by a{color:var(--tx2);text-decoration:none;font-weight:600}
+ .by a:hover{color:var(--acc);text-decoration:none}
+ .by .mark{border-radius:6px}
  .hdr a:hover{text-decoration:none;filter:brightness(1.12)}
  .nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-left:auto}
  .chips{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 4px}
@@ -1196,6 +1200,7 @@ def look_chip(to: str) -> str:
 
 
 COFFEE = "https://buymeacoffee.com/neonpumpkin"   # the author's tip jar (repo: .github/FUNDING.yml)
+PROFILE = "https://github.com/Neon-Pumpkin"       # their GitHub profile (the handle HAS a hyphen)
 
 MARK = "data:image/jpeg;base64," + (
     "/9j/4AAQSkZJRgABAgAAAQABAAD//gAQTGF2YzYwLjMxLjEwMgD/2wBDAAgICAkICQsLCwsLCw0MDQ0NDQ0NDQ0NDQ0ODg4REREODg4NDQ4OEBARERITEhERERETExQUFBgYFxccHB0iIin/xACkAAACAwEBAQAAAAAAAAAAAAAABQYDAQQCBwEAAgMBAQAAAAAAAAAAAAAAAAUCAwEEBhAAAgEDAgIGBAsGBQUBAAAAAgEDAAQREgUhMUFRBiITYTKBcRQVUzNiUiOCQrGhkZJyQ2MkNHOywbOiJUTRdPBUEQACAQIDBgQEBwEBAAAAAAACAQMAESEEElFxYTFBE4EiBTIjoZFSwaKxFNFiQuFy/8AAEQgAeAB4AwEiAAIRAAMRAP/aAAwDAQACEQMRAD8A+CUUUVKpUUUVmaKK2isw3VwW5m1hN5oqQgZ+1N7qqrM01W0XeMlEQLrkxGv1kY1nwaXxtvnq94gz/uUY1f8AtJ/ta32X60sopk9rucZEGa6wYyf5GVcJwmDaaaa5rpoqB5eYMWL32wquis4qtovVNFFFFFFFFFFFFFFFY3RWUN10QWxzEkk3mvVpbHcSCIpttpJJZ51Mb2eHs1E7a3YluLWJ51h+55/gwvl7x8ZJ/D9Ee9loVMMtlRYOaZ6Yx+pv7Rv830pXJZWe0r+uJlNz90ia8VdXjm0xg/dwUnzVS2Xerl5G3QWYcsQJo2vnTE3KXn3kvKlZEzJt8W3lt8W2+lvpddB2N1GA"
@@ -1210,26 +1215,30 @@ MARK = "data:image/jpeg;base64," + (
 
 
 def sponsor_chip() -> str:
-    """The tip-jar chip in the nav row of EVERY page: the LAN page should be as attributable as
-    the repo page, and the mark + the coffee + the profile are the same person. It links OUT of the
-    LAN, so it is inert to the gallery (asks the camera nothing, starts nothing)."""
-    return ('<a class="btn" href="%s" rel="noopener nofollow" title="if this saved you an afternoon '
-            '\u2014 the same mark is on the repo">buy me a coffee</a>' % COFFEE)
+    """The tip-jar chip in the nav row of EVERY page, labelled just `support` (a long chip name eats
+    the nav row): the LAN page should be as attributable as the repo page. It links OUT of the LAN,
+    so it is inert to the gallery (asks the camera nothing, starts nothing)."""
+    return ('<a class="btn" href="%s" rel="noopener nofollow" title="buymeacoffee \u2014 if this saved '
+            'you an afternoon">support \u2615</a>' % COFFEE)
 
 
 def page_hdr(nav) -> str:
     """ONE header for EVERY page (2026-11-01: /help and /status had none at all, and the viewer
-    could not get out). The author's mark is the FIRST thing in the row and links to the tip jar,
-    so the served page is as attributable as the repo page; the wordmark next to it links home.
-    The mark is a 120 px JPEG inlined as a data URI - no route, no file beside the code, no extra
-    request - so a copy of the gallery anywhere still shows who wrote it."""
+    could not get out). The row is the wordmark (links home), then the byline **by Neon-Pumpkin** with
+    a thumbnail of their mark (links to their GitHub profile), then that page's nav chips - asked for:
+    "after the title/hero ipc360 clips, followed by 'by Neon Pumpkin' with a thumbnail of the graphic,
+    and a buymeacoffee link under the word support". The mark is a 120 px JPEG inlined as a data URI
+    (no route, no file beside the code, no extra request), so a copy of the gallery anywhere still
+    says who wrote it."""
     if isinstance(nav, list):
         nav = "".join(nav)
-    return ('<div class="hdr"><a href="%s" rel="noopener nofollow" title="buy the author a coffee">'
-            '<img class="mark" src="%s" width="30" height="30" alt="NeonPumpkin \u2014 the same mark '
-            'is on the repo, the profile and the tip jar"/></a>'
-            '<a class="logo" href="/"><b>ipc360</b> clips</a><div class="nav">%s</div></div>'
-            % (COFFEE, MARK, nav))
+    return ('<div class="hdr">'
+            '<a class="logo" href="/"><b>ipc360</b> clips</a>'
+            '<span class="by">by <a href="%s" rel="me noopener" title="the person who wrote this">%s'
+            '</a><img class="mark" src="%s" width="26" height="26" alt="the Neon-Pumpkin mark \u2014 '
+            'the same one on the GitHub profile, the repo and the tip jar"/></span>'
+            '<div class="nav">%s</div></div>'
+            % (PROFILE, "Neon-Pumpkin", MARK, nav))
 
 
 
