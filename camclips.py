@@ -2064,11 +2064,18 @@ class H(SimpleHTTPRequestHandler):
             return
         if u.path == "/status.json":           # machine-readable for scripts/CLI
             lock = SHARE / "grab.lock"
-            obj = {"running": lock.exists() and time.time() - lock.stat().st_mtime <= LOCK_TIMEOUT}
-            try:
-                obj.update(json.loads(RUNNING.read_text()))
-            except Exception:
-                pass
+            running = lock.exists() and time.time() - lock.stat().st_mtime <= LOCK_TIMEOUT
+            obj = {"running": running}
+            if running:
+                # the sidecar is read ONLY while a lock is ALIVE. A grab that died (killed unit, a
+                # rebooted box, a crashed child) leaves grab-running.json behind, and merging it
+                # every time made a script see day/range/started for a grab that is NOT running
+                # (2026-11-01: {"running": false, "day": "cli", "range": "13:13-13:14"} read as
+                # "a grab is stuck here" when nothing was). idle = just say idle.
+                try:
+                    obj.update(json.loads(RUNNING.read_text()))
+                except Exception:
+                    pass
             self.send_json(obj)
             return
         if u.path == "/delete":               # two-step: /delete?name=X asks, &confirm=1 does

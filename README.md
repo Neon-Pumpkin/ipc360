@@ -287,10 +287,10 @@ leaves a live `grab.lock` that the status bar keeps counting for 20 min.
 
 ## What the protocol notes are worth reading
 
-`PROTOCOL.md` documents the traps, and they are the reason this took weeks rather than
-hours: the 20-byte frame header, the `rev` dword repurposed as a tag by the relay, the
-manager payload envelope, **TCP for the managers vs DATAGRAM for the P2P relay** (a
-short `recv()` silently truncates), keep-alive beats, `dayEpoch` vs the box clock, the
+`PROTOCOL.md` documents the traps — the whole build was **under 24 hours of work**, and these are
+what made it hours rather than minutes: the 20-byte frame header, the `rev` dword repurposed as a
+tag by the relay, the manager payload envelope, **TCP for the managers vs DATAGRAM for the P2P
+relay** (a short `recv()` silently truncates), keep-alive beats, `dayEpoch` vs the box clock, the
 audio being **a-law (G.711) at 8 kHz** and not linear u8, `fid` being a continuous frame
 index whose rate varies per minute, and why concatenating arrived packets drifts the
 sound tens of seconds.
