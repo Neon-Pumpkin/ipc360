@@ -331,6 +331,11 @@ noise. If a pre-fix corpus is regenerated, re-check before repeating the claim.
      +0xa0 predicate, then **`conn+0x10 = -1`** + `SetEventEx(conn+0x27)` = tear this mgr conn down. That is
      why our pre-fix `--pull` (LAN TCP path) got 20351 with body `[cam,user,0x9c42,0]` = "cmd 40002 rejected"
      and then nothing.
+     **MEASURED 2026-11-01 22:2x, so the LAN byte path is closed for both framings**: `--ep <LAN ip>:23456`
+     over **UDP**, with the normal mgr 20241 release beats, answers **0 chunks** — mgr replies only **20312**
+     ("camera P2P public 223.157.134.47:6126 / LAN <LAN ip>:23456", i.e. it restates both endpoints)
+     once per beat, then `(camera idle 10.4 s -> stop)`; wire = 244 B, `probes/lan-test/`. So the chunk
+     transport exists ONLY on the mgr-announced remote relay (`147.135.x / 148.72.x / 15.204.x :19xxx`).
    * Separate, and easy to confuse with the above: **20326 (0x4f66) = `base_conn::mgr_wifi_get`** (ELF **0x1cb494**,
      8-B body — this is the cmd our `day_map()` already sends) whose reply is **20327 (0x4f67)**: `case 0x4f67`
      wants `payload == 0x88` ⇒ inner **0x74 = 116 B at payload+0x14**, dispatch type **0xc**.
