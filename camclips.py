@@ -705,9 +705,10 @@ def card_html(name: str, meta: dict, pre: str = "metadata", auto: bool = False) 
                     '<div class="acts">'
                     '<a class="btn" href="/clip?name=%s">replay</a> '
                     '<a class="btn" href="/dl/%s.mp4" download="%s.mp4">save</a> '
-                    '<a class="btn" href="/delete?name=%s">delete</a> '
+                    '<a class="btn" href="/delete?name=%s&day=%s">delete</a> '
                     '<a href="%s.json">metadata</a></div>'
-                    % (esc(name), esc(name), esc(name), esc(name), esc(name)),
+                    % (esc(name), esc(name), esc(name), esc(name), esc(meta.get("day") or ""),
+                       esc(name)),
                     "</div>", lossless])
 
 
@@ -1171,11 +1172,15 @@ PULLJS = """<script>
 
 
 
-def page(title: str, body: str) -> str:
+def page(title: str, body: str, nav=None) -> str:
     """Every page = the design system + ONLY the FX blocks the viewer switched on, then the
     LIVE bar (STATUSJS keeps it current), then the body inside .wrap, then the scripts:
     status poll, clip ruler/slider, day-map wheel zoom. The look is read from prefs at render
-    time, so changing it on /look changes every page from then on."""
+    time, so changing it on /look changes every page from then on. `nav` is that page's header
+    chips; a renderer that forgot one still gets default_nav(), so NO page can exist without a
+    way home (asked three times in a row on 2026-11-01: the delete result, /help, a 404)."""
+    if 'class="hdr"' not in body:
+        body = page_hdr(nav if nav is not None else default_nav()) + body
     css = CSS + "\n" + fx_css(fx_pref()) + "\n</style>"
     return (PAGE_TMPL % (esc(title), css, status_frag(), body, STATUSJS + SCRUBJS + MAPJS))
 
@@ -1240,6 +1245,35 @@ def page_hdr(nav) -> str:
             '<div class="nav">%s</div></div>'
             % (PROFILE, "Neon-Pumpkin", MARK, nav))
 
+
+
+def day_chip(day: str) -> str:
+    """The `that day` nav chip — nothing to link to when the page has no day, so an empty chip."""
+    return ('<a class="btn" href="/day?day=%s">that day</a>' % esc(day)) if day else ""
+
+
+def day_for(name: str) -> str:
+    """The day a clip belongs to, for the nav chips of the /delete pages: those URLs carry ONLY
+    the name (/delete?name=X from a card or a day-map row). The sidecar answers first (it says
+    `day`), then a name that opens with a date (a CLI import, the app's own clip). "" when neither
+    knows — day_chip() then just omits the chip instead of linking /day?day= (empty = today, WRONG)."""
+    d = ""
+    try:
+        d = json.loads((SHARE / (name + ".json")).read_text()).get("day") or ""
+    except Exception:
+        pass
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d or ""):
+        m = re.match(r"(\d{4}-\d{2}-\d{2})", name)
+        d = m.group(1) if m else ""
+    return d
+
+
+def default_nav() -> str:
+    """The header a page gets when its renderer did not build one (page()'s safety net): home,
+    the help page, the tip jar."""
+    return page_hdr(['<a class="btn" href="/">home \u2014 this month</a>',
+                     '<a class="btn" href="/help">how it works</a>',
+                     sponsor_chip()])
 
 
 def render_look(to: str = "") -> str:
@@ -1757,10 +1791,10 @@ def render_day(day: str, pull: tuple = None, check=None, clock: str | None = Non
                     '<span class="dacts">'
                     '<a class="btn" href="/clip?name=%s">watch</a> '
                     '<a class="btn" href="/dl/%s.mp4" download="%s.mp4">save</a> '
-                    '<a class="btn" href="/delete?name=%s">delete</a></span></div>'
+                    '<a class="btn" href="/delete?name=%s&day=%s">delete</a></span></div>'
                     % (head, esc(name), esc((meta.get("range") or "").replace("-", "\u2013")),
                        mb(meta.get("bytes") or 0), meta.get("dur_video") or 0, partial, errs,
-                       esc(name), esc(name), esc(name), esc(name)))
+                       esc(name), esc(name), esc(name), esc(name), esc(day)))
     body.append('<div class="dlist">%s</div>' % "".join(rows) if rows else
                 '<div class="panel"><div class="k2">nothing pulled for this day yet \u00b7 click a green '
                 'day-map minute (one pass streams one minute of SD in ~50 s of wall-clock, so a 5-pass '
@@ -1780,9 +1814,12 @@ def render_clip(name: str) -> str:
     browsers refuse to start an untouched video with sound), ruler + slider seek it in place."""
     jp = SHARE / (name + ".json")
     if not (SHARE / (name + ".mp4")).exists() or not jp.exists():
-        return page(name, '<h1>%s \u2014 not on the share</h1>'
-                    '<div class="k"><a href="/">home</a> \u00b7 '
-                    '<a class="help" href="/help">?</a></div>' % esc(name))
+        return page(name, ('<h1>%s \u2014 not on the share</h1>'
+                    '<div class="k">that clip is not on the share \u2014 the minute is still on the '
+                    'card, so the day map can pull it again.</div>')
+                    % esc(name),
+                    ['<a class="btn" href="/">home \u2014 this month</a>',
+                     '<a class="btn" href="/help">how it works</a>', sponsor_chip()])
     meta = json.loads(jp.read_text())
     d0 = meta.get("day") or ""
     body = [page_hdr(['<a class="btn" href="/day?day=%s">that day</a>' % esc(d0),
@@ -1807,7 +1844,9 @@ def render_clip_by_range(day: str, rng: str) -> str:
                 'time \u2014 it opens itself when it lands) \u00b7 or that day\'s page '
                 '<a href="/day?day=%s">%s</a></div></div>'
                 % (esc(day), esc(rng), esc(day), esc(rng).replace(":", "%3A"),
-                   (PASS_S * 5 * mins) // 60, esc(day), esc(day)))
+                   (PASS_S * 5 * mins) // 60, esc(day), esc(day)),
+                ['<a class="btn" href="/">home \u2014 this month</a>', day_chip(day),
+                 '<a class="btn" href="/help">how it works</a>', sponsor_chip()])
 
 
 
@@ -1944,11 +1983,12 @@ class H(SimpleHTTPRequestHandler):
         words = [w for w in path.split("/") if w and w not in (os.curdir, os.pardir)]
         return os.path.join(str(SHARE), *words)
 
-    def send_html(self, s):
+    def send_html(self, s, status=200):
         """Every dynamic page (LIVE bar included) is regenerated per request: a browser that
-        caches one may keep a bar frozen at its first render , so say no-store on all of them. Static files stay cacheable."""
+        caches one may keep a bar frozen at its first render , so say no-store on all of them. Static files stay cacheable.
+        `status` lets the server's OWN pages (a 404) answer with the right code and still be HTML."""
         body = s.encode()
-        self.send_response(200)
+        self.send_response(status)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
@@ -1963,6 +2003,17 @@ class H(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
+
+    def error404(self, message=None):
+        """A wrong URL used to be the browser's bare page — no wordmark, no way out, exactly the
+        complaint that kept coming back. Python 3.12's send_error() builds its OWN body and never
+        routes through error404, so serve_file() calls this method directly — same header as every
+        other page, so even a mistyped address says where to go next."""
+        self.send_html(page("not found",
+                            '<h1>no such page on the gallery</h1>'
+                            '<div class="k">a mistyped address \u00b7 the calendar, the month chips and '
+                            'the chips on every page reach everything that exists.</div>',
+                            default_nav()), 404)
 
     def do_GET(self):
         u = urlparse(self.path)
@@ -2022,10 +2073,15 @@ class H(SimpleHTTPRequestHandler):
             return
         if u.path == "/delete":               # two-step: /delete?name=X asks, &confirm=1 does
             nm = (q.get("name") or [""])[0]
+            d0 = (q.get("day") or [""])[0] or day_for(nm)
+            nav = ['<a class="btn" href="/">home \u2014 this month</a>', day_chip(d0),
+                   '<a class="btn" href="/help">how it works</a>', sponsor_chip()]
             files = clip_files(nm)
             if not files:
-                self.send_html(page(nm, '<h1>%s \u2014 not on the share</h1>'
-                            '<div class="k"><a href="/">days</a></div>' % esc(nm)))
+                self.send_html(page(nm, ('<h1>%s \u2014 not on the share</h1>'
+                            '<div class="k">nothing by that name on the share \u2014 the minute is '
+                            'still on the card, so that day\'s day map can pull it again.</div>')
+                            % esc(nm), nav))
                 return
             if not (q.get("confirm") or [""])[0]:
                 self.send_html(page(nm,
@@ -2038,13 +2094,14 @@ class H(SimpleHTTPRequestHandler):
                     'probes.</div>'
                     '<a class="btn" href="/delete?name=%s&confirm=1">yes, delete it</a></div>'
                     % (esc(nm), len(files), mb(sum(f.stat().st_size for f in files if f.is_file())),
-                       esc(" ".join(str(f).replace(str(SHARE), "") for f in files)), esc(nm))))
+                       esc(" ".join(str(f).replace(str(SHARE), "") for f in files)), esc(nm)),
+                       nav))
                 return
             gone, nbytes = delete_clip(nm)
             self.send_html(page(nm, '<h1>%s deleted</h1>'
-                        '<div class="k">%d files removed (~%s) \u00b7 <a href="/day?day=%s">that day</a> '
-                        '\u00b7 <a href="/">all days</a></div>'
-                        % (esc(nm), gone, mb(nbytes), esc((q.get("day") or [""])[0]))))
+                        '<div class="k">%d files removed (~%s) \u00b7 the minute stays ON THE CARD '
+                        '\u2014 pull it again from that day\'s page whenever you want</div>'
+                        % (esc(nm), gone, mb(nbytes)), nav))
             return
         if u.path == "/api/daymap":
             day = (q.get("day") or [datetime.date.today().isoformat()])[0]
@@ -2170,7 +2227,7 @@ class H(SimpleHTTPRequestHandler):
         """Static file with Range support (so <video> seeking doesn't re-fetch 5 MB)."""
         fp = self.translate_path(self.path)
         if not os.path.isfile(fp):
-            self.send_error(404)
+            self.error404()
             return
         blob = open(fp, "rb").read()
         off, size = 0, len(blob)

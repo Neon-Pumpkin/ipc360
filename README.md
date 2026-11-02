@@ -229,6 +229,11 @@ CAMCLIPS_SHARE=~/public/camclips-share python3 camclips.py --serve --port 8795
   they never ask the camera for anything.
 * `/delete?name=X` is **two steps**: it lists exactly which files go, then
   `&confirm=1` removes them. The minute stays on the card, so you can pull it again.
+* **Every page has the same header row** — the wordmark links home, then that page's chips
+  (`that day`, `how it works`, the tip jar). That includes the delete result, the not-on-share
+  pages, and a wrong URL (a real 404, still a gallery page): no page can be born without a way
+  out. The delete links carry their day (`/delete?name=X&day=YYYY-MM-DD`), so `that day` never
+  points at the wrong day.
 * `/sweep?m=YYYY-MM` asks the card for **every date of that month** in one walk (~8 s each).
 * `/status`, `/status.json`, `/api/daymap?day=`, `/refresh?day=`, `/dl/NAME.mp4`.
 
