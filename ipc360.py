@@ -828,6 +828,13 @@ def pull(mgr, cam, user, father, start, end, outdir, mgr_ip_packed=b"", wiretag=
     ip, port = ep if ep else (cam_ip, cam_port)
     if cam_ip and (not ep or force_ep):
         ip, port = cam_ip, cam_port
+    if not ip or not port:
+        # nothing to dial: the mgr gave no 20204 relay endpoint AND no LAN fallback ip is set.
+        # Say so instead of connect((None, 23456)) -> TypeError several frames deeper.
+        if verbose:
+            print("  no camera endpoint: the mgr returned no 20204 relay - set --cam-ip <LAN ip>"
+                  " (or IPC360_CAM_IP / the settings file), or force one with --ep ip:port")
+        return out
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM if udp else socket.SOCK_STREAM)
     s.settimeout(12)
     s.connect((ip, int(port)))
@@ -1105,7 +1112,8 @@ def fmt_ranges(mins):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mgr", default=None, help="override the mgr the login returns (20xxx camera cmds)")
-    ap.add_argument("--login-mgr", default=os.environ.get("IPC360_LOGIN_MGR", "52.8.101.180:19000"), help="mgr that serves 10xxx account cmds")
+    ap.add_argument("--login-mgr", default=cfg_get("login_mgr", "IPC360_LOGIN_MGR",
+                                                   "52.8.101.180:19000"), help="mgr that serves 10xxx account cmds (--setup / IPC360_LOGIN_MGR)")
     ap.add_argument("--cam", type=int, default=(int(cfg_get("cam", "IPC360_CAM_ID"))
                                  if cfg_get("cam", "IPC360_CAM_ID") not in (None, "") else None))
     ap.add_argument("--list", action="store_true")
@@ -1121,8 +1129,12 @@ def main():
     ap.add_argument("--day", default=datetime.date.today().isoformat())
     ap.add_argument("--play", default=None, help="HH:MM-HH:MM")
     ap.add_argument("--pull", default=None, help="HH:MM-HH:MM straight off the camera P2P")
-    ap.add_argument("--cam-ip", default="<LAN ip>")
-    ap.add_argument("--cam-port", type=int, default=23456)
+    ap.add_argument("--cam-ip", default=cfg_get("cam_ip", "IPC360_CAM_IP"),
+                    help="LAN ip of the camera - ONLY the direct-LAN fallback, used when the mgr"
+                         " gives no 20204 relay endpoint (--setup / IPC360_CAM_IP)")
+    ap.add_argument("--cam-port", type=int,
+                    default=int(cfg_get("cam_port", "IPC360_CAM_PORT", 23456) or 23456),
+                    help="camera P2P port on that LAN ip (default 23456; --setup / IPC360_CAM_PORT)")
     ap.add_argument("--seconds", type=int, default=90, help="wall-clock cap ON ONE PASS of a --pull/--play (pull() starts its clock at the top of every pass, so a 3-minute range needs ~60 s x minutes per pass; a fixed 150 s truncates it)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--ep", default=None, help="force the camera P2P endpoint ip:port")

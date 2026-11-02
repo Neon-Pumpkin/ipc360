@@ -50,6 +50,7 @@ import os
 import re
 import subprocess
 import shutil
+import sys
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -70,7 +71,9 @@ def cfg():
 
 SHARE = Path(os.environ.get("CAMCLIPS_SHARE") or cfg().get("share") or "camclips-share")
                                           # WHERE clips + day maps + prefs live: env, or the settings file
-SRC = Path(".")
+SRC = Path(os.environ.get("IPC360_DIR") or ".")
+                                    # where ipc360.py lives; the gallery runs it with sys.executable
+                                    # (NOT the literal "python3" - Windows has no such command)
 PWFILE = None   # creds come from the environment, not a file
 CAM = os.environ.get("IPC360_CAM_ID") or str(cfg().get("cam", ""))   # the camId as digits
 LOCK_TIMEOUT = 1200                     # wall-clock guard for one grab (s)
@@ -288,7 +291,7 @@ def thumbs(mp4: Path, n: int = 9, width: int = 300) -> list:
 def run_grab(day: str, rng: str, passes: int = 5, seconds: int | None = None) -> dict:
     """ipc360.py --play into the share; returns the metadata dict (None fields on failure).
 
-    The pull's stdout is streamed line-by-line into `grab-<name>.log` (python3 -u) so
+    The pull's stdout is streamed line-by-line into `grab-<name>.log` (sys.executable -u) so
     /status shows live progress while the thread runs, instead of an empty tail.
     """
     name = clip_name(day, rng)
@@ -302,7 +305,7 @@ def run_grab(day: str, rng: str, passes: int = 5, seconds: int | None = None) ->
         seconds = int(max(150, PASS_S * mins * 1.8))
     kill_after = max(LOCK_TIMEOUT, int(PASS_S * passes * mins * 1.6) + 300)
     env = dict(os.environ, IPC360_LOCK_OK="1")   # IPC360_EMAIL / IPC360_PW / IPC360_CAM_ID are inherited
-    cmd = ["python3", "-u", str(SRC / "ipc360.py"), "--cam", str(CAM), "--play", rng, "--day", day,
+    cmd = [sys.executable, "-u", str(SRC / "ipc360.py"), "--cam", str(CAM), "--play", rng, "--day", day,
            "--out", str(work / "seg"), "--passes", str(passes),
            "--seconds", str(seconds), "--idle", "15"]
     print("camclips: running", " ".join(cmd))
@@ -384,7 +387,7 @@ def daymap(day: str, force: bool = False) -> dict:
     if force:
         # WE own grab.lock here (a month sweep): ipc360's own --list guard must not refuse our queries
         env["IPC360_LOCK_OK"] = "1"
-    p = subprocess.run(["python3", str(SRC / "ipc360.py"), "--list", "--day", day],
+    p = subprocess.run([sys.executable, str(SRC / "ipc360.py"), "--list", "--day", day],
                        cwd=str(SRC), env=env, capture_output=True, text=True, timeout=120)
     log = (p.stdout or "") + "\n" + (p.stderr or "")
     summary = next((ln for ln in log.splitlines() if ln.startswith("day ")), "")

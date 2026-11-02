@@ -19,7 +19,9 @@ sweep.log
 daymap-*.json
 __pycache__/
 *.pyc
-# if you keep creds beside the checkout anyway, ignore them loudly
+# camera account settings + password (ipc360.py --setup writes it) — plaintext, never commit it.
+# if you point IPC360_CONFIG at another name, add that name here too
+ipc360-config.json
 *pw*
 *creds*
 *.txt
