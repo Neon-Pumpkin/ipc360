@@ -21,6 +21,24 @@ The camera records video to its SD card. The IPC360 app does not provide a conve
 
 The tool does not change the camera's settings or write to its SD card. It reads the recording index and retrieves existing recordings. An internet connection is still required for account login and the camera-service requests. This is not an offline camera-access method.
 
+## What it looks like
+
+These are the gallery's three main pages. The camera's network address and the video frame are changed in the pictures; in a real run they show your own address and your own yard.
+
+**The month calendar** — one cell per date. The thin bar inside a cell is that date's 24-hour timeline: green is video the camera's SD card holds, amber is video the gallery already has.
+
+<img src="assets/shot-calendar.png" width="900" alt="The month calendar page: one cell per date, each carrying a 24-hour timeline bar">
+
+**One day** — the day map as two 12-hour rows. Click a green minute to download it, scroll the mouse wheel over a row to zoom that row, and a date that is already over opens from its saved day map without asking the camera.
+
+<img src="assets/shot-daymap.png" width="900" alt="One day page: the day map drawn as two 12-hour rows with hour labels">
+
+**One clip** — the video starts playing on its own, the ruler below it seeks by minute, the slider and the row of still images jump to a second, and the line under the buttons says honestly what was downloaded (length, frame rate, audio, decode errors).
+
+<img src="assets/shot-clip.png" width="900" alt="One clip page: the video, its minute ruler, a position slider, a row of still images, and a report line">
+
+The frame is blurred in the clip picture; a real one shows your own yard. Use `/look` to change how the gallery looks — the effects change only the pages, never the camera or the downloaded video.
+
 ## Camera compatibility
 
 This project uses the IPC360 / Puwell **PW native network SDK** protocol. It has been tested with one Puwell-SDK camera enrolled in the `com.ipc360` app. Compatibility with other cameras has not been confirmed.
